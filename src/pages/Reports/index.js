@@ -43,10 +43,4 @@ const Reports = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    //fles:1,
-  },
-});
 export default Reports;
