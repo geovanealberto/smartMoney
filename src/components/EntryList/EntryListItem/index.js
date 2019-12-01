@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity,View, Text, StyleSheet} from 'react-native';
+import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 
 import Svg, {Circle, Rect} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,8 +10,7 @@ const EntryListItem = ({entry, isFirstItem, isLastItem, onEntryPress}) => {
   const bulletLineY = isFirstItem ? 25 : 0;
   const bulletLineHeight = isLastItem ? 25 : 50;
   const showBulletLine = !(isFirstItem && isLastItem);
-  // const bulletColor = entry.category.color || Colors.white;
-  const bulletColor = Colors.white;
+  const bulletColor = entry.category.color || Colors.white;
 
   return (
     <TouchableOpacity

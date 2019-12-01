@@ -1,35 +1,49 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+
+import ActionFooter, {
+  ActionPrimaryButton,
+  ActionSecondaryButton,
+} from '../../components/Core/ActionFooter';
 
 import BalanceLabel from '../../components/BalanceLabel';
-import NewEntryInput from  './NewEntryInput';
+import NewEntryInput from './NewEntryInput';
+import NewEntryCategoryPicker from './NewEntryCategoryPicker';
+import NewEntryDatePicker from './NewEntryDatePicker';
+import NewEntryDeleteAction from './NewEntryDeleteAction';
 
-import {saveEntry} from '../../services/Entries';
-import {deleteEntry} from '../../services/Entries';
+import useEntries from '../../hooks/useEntries';
 
-import Colors from'../../styles/Colors';
+import Colors from '../../styles/Colors';
 
 const NewEntry = ({navigation}) => {
-  
-  
   const entry = navigation.getParam('entry', {
-    id:null,
-    amount: '0.00',
+    id: null,
+    amount: 0,
     entryAt: new Date(),
+    category: {id: null, name: 'Selecione'},
   });
 
-  const [amount, setAmount] = useState(entry.amount);
+  const [, saveEntry, deleteEntry] = useEntries();
 
-  const isValid = () =>{
-    if (parseFloat(amount) !== 0){
+  const [debit, setDebit] = useState(entry.amount <= 0);
+  const [amount, setAmount] = useState(entry.amount);
+  const [category, setCategory] = useState(entry.category);
+  const [entryAt, setEntryAt] = useState(entry.entryAt);
+
+  const isValid = () => {
+    if (parseFloat(amount) !== 0) {
       return true;
     }
+
     return false;
   };
 
   const onSave = () => {
     const data = {
       amount: parseFloat(amount),
+      category: category,
+      entryAt: entryAt,
     };
 
     console.log('NewEntry :: save ', data);
@@ -42,32 +56,41 @@ const NewEntry = ({navigation}) => {
     onClose();
   };
 
-  const onClose = () =>{
+  const onClose = () => {
     navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <BalanceLabel  />
+      <BalanceLabel />
 
-      <View>
-      <NewEntryInput value={amount} onChangeValue={setAmount} />
-
-        <TextInput style={styles.input} />
-        <Button title="GPS" />
-        <Button title="Camera" />
-      </View>
-
-      <View>
-        <Button 
-          title="Adicionar" 
-          onPress={()=> {
-            isValid() && onSave();
-          }} 
+      <View style={styles.formContainer}>
+        <NewEntryInput
+          value={amount}
+          onChangeValue={setAmount}
+          onChangeDebit={setDebit}
         />
-        <Button title="Excluir" onPress={onDelete} />
-        <Button title="Cancelar" onPress={onClose}/>
+        <NewEntryCategoryPicker
+          debit={debit}
+          category={category}
+          onChangeCategory={setCategory}
+        />
+
+        <View style={styles.formActionContainer}>
+          <NewEntryDatePicker value={entryAt} onChange={setEntryAt} />
+          <NewEntryDeleteAction entry={entry} onOkPress={onDelete} />
+        </View>
       </View>
+
+      <ActionFooter>
+        <ActionPrimaryButton
+          title={entry.id ? 'Salvar' : 'Adicionar'}
+          onPress={() => {
+            isValid() && onSave();
+          }}
+        />
+        <ActionSecondaryButton title="Cancelar" onPress={onClose} />
+      </ActionFooter>
     </View>
   );
 };
@@ -75,13 +98,17 @@ const NewEntry = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:Colors.background,
+    backgroundColor: Colors.background,
     padding: 10,
   },
-
-  input: {
-    borderColor: '#000',
-    borderWidth: 1,
+  formContainer: {
+    flex: 1,
+    paddingVertical: 20,
+  },
+  formActionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
   },
 });
 
