@@ -7,7 +7,7 @@ import EntryListItem from './EntryListItem';
 
 import useEntries from '../../hooks/useEntries';
 
-const EntryList = ({days = 7, category, onEntryPress, onPressActionButton}) => {
+const EntryList = ({days = 30, category, onEntryPress, onPressActionButton}) => {
   const [entries] = useEntries(days, category);
 
   return (
