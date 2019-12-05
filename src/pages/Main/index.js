@@ -1,20 +1,29 @@
 import React from 'react';
-import {View, StyleSheet, Button} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
 
 import BalancePanel from '../../components/BalancePanel';
 import EntrySummary from '../../components/EntrySummary';
 import EntryList from '../../components/EntryList';
 
+import Colors from '../../styles/Colors';
+
 const Main = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <BalancePanel />
-      <Button
-        title="Adicionar"
-        onPress={() => navigation.navigate('NewEntry')}
-      />
-      <EntrySummary />
-      <EntryList />
+      <BalancePanel onNewEntryPress={() => navigation.navigate('NewEntry')} />
+      <ScrollView>
+        <EntrySummary
+          onPressActionButton={() => navigation.navigate('Reports')}
+        />
+        <EntryList
+          onEntryPress={entry =>
+            navigation.navigate('NewEntry', {
+              entry: entry,
+            })
+          }
+          onPressActionButton={() => navigation.navigate('Reports')}
+        />
+      </ScrollView>
     </View>
   );
 };
@@ -22,7 +31,7 @@ const Main = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    backgroundColor: Colors.background,
   },
 });
 
